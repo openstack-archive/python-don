@@ -1,0 +1,278 @@
+digraph DON_DON {
+graph [fontsize=10 fontname="Helvetica"];
+node [fontsize=10 fontname="Helvetica"];
+rankdir = TB;
+ranksep = 1;
+concentrate = true;
+compound = true;
+edge [dir=none]
+
+subgraph cluster_DONComputeNode {
+style=filled
+subgraph cluster_ComputeNode {
+ComputeNode [ shape = plaintext, label = <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="5" CELLPADDING="5" BGCOLOR="red">
+<TR>
+<TD COLSPAN="1" BORDER="0" BGCOLOR="yellow" PORT="ComputeNode">Compute Node</TD>
+</TR>
+</TABLE>>];
+
+}
+
+subgraph cluster_Nova {
+style=filled
+subgraph cluster_VMs {
+VMs [ shape = plaintext, label = <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="5" CELLPADDING="5" BGCOLOR="white">
+<TR>
+<TD COLSPAN="7" BORDER="0" BGCOLOR="white" PORT="VMs">VMs</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1" BGCOLOR="#ff9933">VM1-1</TD>
+<TD ROWSPAN="1" COLSPAN="1" BGCOLOR="#ff9933">VM1-2</TD>
+<TD ROWSPAN="1" COLSPAN="1" BGCOLOR="#ff9933">VM3-1</TD>
+<TD ROWSPAN="1" COLSPAN="1" BGCOLOR="#ff9933">VM3-2</TD>
+<TD ROWSPAN="1" COLSPAN="3" BGCOLOR="#ff9933">VM4</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1" BGCOLOR="#c079f3">private1</TD>
+<TD ROWSPAN="1" COLSPAN="1" BGCOLOR="#c079f3">private1</TD>
+<TD ROWSPAN="1" COLSPAN="1" BGCOLOR="#b2f379">private2</TD>
+<TD ROWSPAN="1" COLSPAN="1" BGCOLOR="#b2f379">private2</TD>
+<TD ROWSPAN="1" COLSPAN="1" BGCOLOR="#b2f379">private2</TD>
+<TD ROWSPAN="1" COLSPAN="1" BGCOLOR="#79f3ef">public</TD>
+<TD ROWSPAN="1" COLSPAN="1" BGCOLOR="#c079f3">private1</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1" BGCOLOR="#c079f3" PORT="10023">10.0.2.3</TD>
+<TD ROWSPAN="1" COLSPAN="1" BGCOLOR="#c079f3" PORT="10024">10.0.2.4</TD>
+<TD ROWSPAN="1" COLSPAN="1" BGCOLOR="#b2f379" PORT="10033">10.0.3.3</TD>
+<TD ROWSPAN="1" COLSPAN="1" BGCOLOR="#b2f379" PORT="10034">10.0.3.4</TD>
+<TD ROWSPAN="1" COLSPAN="1" BGCOLOR="#b2f379" PORT="10036">10.0.3.6</TD>
+<TD ROWSPAN="1" COLSPAN="1" BGCOLOR="#79f3ef" PORT="1722445">172.24.4.5</TD>
+<TD ROWSPAN="1" COLSPAN="1" BGCOLOR="#c079f3" PORT="10026">10.0.2.6</TD>
+</TR>
+</TABLE>>];
+
+}
+
+subgraph cluster_LinuxBridge {
+LinuxBridge [ shape = plaintext, label = <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="5" CELLPADDING="5" BGCOLOR="white">
+<TR>
+<TD COLSPAN="7" BORDER="0" BGCOLOR="white" PORT="LinuxBridge">Linux Bridge</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1" BGCOLOR="#c079f3" PORT="tapba7460ea_c9">tapba7460ea-c9</TD>
+<TD ROWSPAN="1" COLSPAN="1" BGCOLOR="#c079f3" PORT="tapa1eba09e_99">tapa1eba09e-99</TD>
+<TD ROWSPAN="1" COLSPAN="1" BGCOLOR="#b2f379" PORT="tap95772001_99">tap95772001-99</TD>
+<TD ROWSPAN="1" COLSPAN="1" BGCOLOR="#b2f379" PORT="tapb0cb94f0_97">tapb0cb94f0-97</TD>
+<TD ROWSPAN="1" COLSPAN="1" BGCOLOR="#b2f379" PORT="tap58b49f9d_1d">tap58b49f9d-1d</TD>
+<TD ROWSPAN="1" COLSPAN="1" BGCOLOR="#79f3ef" PORT="tap68484e46_cf">tap68484e46-cf</TD>
+<TD ROWSPAN="1" COLSPAN="1" BGCOLOR="#c079f3" PORT="tap8f35a39f_2a">tap8f35a39f-2a</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1" BGCOLOR="#c079f3" PORT="qbrba7460ea_c9">qbrba7460ea-c9</TD>
+<TD ROWSPAN="1" COLSPAN="1" BGCOLOR="#c079f3" PORT="qbra1eba09e_99">qbra1eba09e-99</TD>
+<TD ROWSPAN="1" COLSPAN="1" BGCOLOR="#b2f379" PORT="qbr95772001_99">qbr95772001-99</TD>
+<TD ROWSPAN="1" COLSPAN="1" BGCOLOR="#b2f379" PORT="qbrb0cb94f0_97">qbrb0cb94f0-97</TD>
+<TD ROWSPAN="1" COLSPAN="1" BGCOLOR="#b2f379" PORT="qbr58b49f9d_1d">qbr58b49f9d-1d</TD>
+<TD ROWSPAN="1" COLSPAN="1" BGCOLOR="#79f3ef" PORT="qbr68484e46_cf">qbr68484e46-cf</TD>
+<TD ROWSPAN="1" COLSPAN="1" BGCOLOR="#c079f3" PORT="qbr8f35a39f_2a">qbr8f35a39f-2a</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1" BGCOLOR="#c079f3" PORT="qvbba7460ea_c9">qvbba7460ea-c9</TD>
+<TD ROWSPAN="1" COLSPAN="1" BGCOLOR="#c079f3" PORT="qvba1eba09e_99">qvba1eba09e-99</TD>
+<TD ROWSPAN="1" COLSPAN="1" BGCOLOR="#b2f379" PORT="qvb95772001_99">qvb95772001-99</TD>
+<TD ROWSPAN="1" COLSPAN="1" BGCOLOR="#b2f379" PORT="qvbb0cb94f0_97">qvbb0cb94f0-97</TD>
+<TD ROWSPAN="1" COLSPAN="1" BGCOLOR="#b2f379" PORT="qvb58b49f9d_1d">qvb58b49f9d-1d</TD>
+<TD ROWSPAN="1" COLSPAN="1" BGCOLOR="#79f3ef" PORT="qvb68484e46_cf">qvb68484e46-cf</TD>
+<TD ROWSPAN="1" COLSPAN="1" BGCOLOR="#c079f3" PORT="qvb8f35a39f_2a">qvb8f35a39f-2a</TD>
+</TR>
+</TABLE>>];
+
+}
+
+}
+
+subgraph cluster_OVS {
+style=filled
+subgraph cluster_compute_br_int {
+compute_br_int [ shape = plaintext, label = <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="5" CELLPADDING="5" BGCOLOR="white">
+<TR>
+<TD COLSPAN="7" BORDER="0" BGCOLOR="white" PORT="OVSbr_int">OVS br_int</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1" BGCOLOR="#c079f3" PORT="qvoba7460ea_c9">[28] qvoba7460ea-c9</TD>
+<TD ROWSPAN="1" COLSPAN="1" BGCOLOR="#c079f3" PORT="qvoa1eba09e_99">[29] qvoa1eba09e-99</TD>
+<TD ROWSPAN="1" COLSPAN="1" BGCOLOR="#b2f379" PORT="qvo95772001_99">[30] qvo95772001-99</TD>
+<TD ROWSPAN="1" COLSPAN="1" BGCOLOR="#b2f379" PORT="qvob0cb94f0_97">[31] qvob0cb94f0-97</TD>
+<TD ROWSPAN="1" COLSPAN="1" BGCOLOR="#b2f379" PORT="qvo58b49f9d_1d">[33] qvo58b49f9d-1d</TD>
+<TD ROWSPAN="1" COLSPAN="1" BGCOLOR="#79f3ef" PORT="qvo68484e46_cf">[34] qvo68484e46-cf</TD>
+<TD ROWSPAN="1" COLSPAN="1" BGCOLOR="#c079f3" PORT="qvo8f35a39f_2a">[32] qvo8f35a39f-2a</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1" BGCOLOR="#c079f3" PORT="qvoba7460ea_c9tag_2">VLAN tag:2</TD>
+<TD ROWSPAN="1" COLSPAN="1" BGCOLOR="#c079f3" PORT="qvoa1eba09e_99tag_2">VLAN tag:2</TD>
+<TD ROWSPAN="1" COLSPAN="1" BGCOLOR="#b2f379" PORT="qvo95772001_99tag_3">VLAN tag:3</TD>
+<TD ROWSPAN="1" COLSPAN="1" BGCOLOR="#b2f379" PORT="qvob0cb94f0_97tag_3">VLAN tag:3</TD>
+<TD ROWSPAN="1" COLSPAN="1" BGCOLOR="#b2f379" PORT="qvo58b49f9d_1dtag_3">VLAN tag:3</TD>
+<TD ROWSPAN="1" COLSPAN="1" BGCOLOR="#79f3ef" PORT="qvo68484e46_cftag_4">VLAN tag:4</TD>
+<TD ROWSPAN="1" COLSPAN="1" BGCOLOR="#c079f3" PORT="qvo8f35a39f_2atag_2">VLAN tag:2</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="7" BGCOLOR="#ffcc00" PORT="patch_tun">[19] patch-tun</TD>
+</TR>
+</TABLE>>];
+
+}
+
+subgraph cluster_compute_br_tun {
+compute_br_tun [ shape = plaintext, label = <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="5" CELLPADDING="5" BGCOLOR="white">
+<TR>
+<TD COLSPAN="7" BORDER="0" BGCOLOR="white" PORT="OVSbr_tun">OVS br_tun</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="7" BGCOLOR="#ffcc00" PORT="patch_int">[1] patch-int</TD>
+</TR>
+</TABLE>>];
+
+}
+
+}
+
+ComputeNode:s -> VMs:n [color = "#0066cc", penwidth = "4", style="invis"]
+VMs:10023:s -> LinuxBridge:tapba7460ea_c9:n [color = "#0066cc", penwidth = "4"]
+VMs:10024:s -> LinuxBridge:tapa1eba09e_99:n [color = "#0066cc", penwidth = "4"]
+VMs:10033:s -> LinuxBridge:tap95772001_99:n [color = "#0066cc", penwidth = "4"]
+VMs:10034:s -> LinuxBridge:tapb0cb94f0_97:n [color = "#0066cc", penwidth = "4"]
+VMs:10036:s -> LinuxBridge:tap58b49f9d_1d:n [color = "#0066cc", penwidth = "4"]
+VMs:1722445:s -> LinuxBridge:tap68484e46_cf:n [color = "#0066cc", penwidth = "4"]
+VMs:10026:s -> LinuxBridge:tap8f35a39f_2a:n [color = "#0066cc", penwidth = "4"]
+LinuxBridge:qvbba7460ea_c9:s -> compute_br_int:qvoba7460ea_c9:n [color = "#0066cc", penwidth = "4"]
+LinuxBridge:qvba1eba09e_99:s -> compute_br_int:qvoa1eba09e_99:n [color = "#0066cc", penwidth = "4"]
+LinuxBridge:qvb95772001_99:s -> compute_br_int:qvo95772001_99:n [color = "#0066cc", penwidth = "4"]
+LinuxBridge:qvbb0cb94f0_97:s -> compute_br_int:qvob0cb94f0_97:n [color = "#0066cc", penwidth = "4"]
+LinuxBridge:qvb58b49f9d_1d:s -> compute_br_int:qvo58b49f9d_1d:n [color = "#0066cc", penwidth = "4"]
+LinuxBridge:qvb68484e46_cf:s -> compute_br_int:qvo68484e46_cf:n [color = "#0066cc", penwidth = "4"]
+LinuxBridge:qvb8f35a39f_2a:s -> compute_br_int:qvo8f35a39f_2a:n [color = "#0066cc", penwidth = "4"]
+compute_br_int:patch_tun:s -> compute_br_tun:patch_int:n [color = "#0066cc", penwidth = "4"]
+}
+
+subgraph cluster_DONNetworkNode {
+style=filled
+subgraph cluster_NetworkNode {
+NetworkNode [ shape = plaintext, label = <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="5" CELLPADDING="5" BGCOLOR="red">
+<TR>
+<TD COLSPAN="1" BORDER="0" BGCOLOR="yellow" PORT="NetworkNode">Network Node</TD>
+</TR>
+</TABLE>>];
+
+}
+
+subgraph cluster_OVS {
+style=filled
+subgraph cluster_br_ex {
+br_ex [ shape = plaintext, label = <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="5" CELLPADDING="5" BGCOLOR="white">
+<TR>
+<TD COLSPAN="2" BORDER="0" BGCOLOR="white" PORT="OVSbr_ex">OVS br_ex</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1" BGCOLOR="#ff9933" PORT="router1">router1</TD>
+<TD ROWSPAN="1" COLSPAN="1" BGCOLOR="#ff9933" PORT="router2">router2</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1" BGCOLOR="#ff9933" PORT="172.24.4.3/24">172.24.4.3/24</TD>
+<TD ROWSPAN="1" COLSPAN="1" BGCOLOR="#ff9933" PORT="172.24.4.4/24">172.24.4.4/24</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1" BGCOLOR="#ff9933" PORT="qg_e6c19c2c_8c">[6] qg-e6c19c2c-8c</TD>
+<TD ROWSPAN="1" COLSPAN="1" BGCOLOR="#ff9933" PORT="qg_718e237a_3a">[7] qg-718e237a-3a</TD>
+</TR>
+</TABLE>>];
+
+}
+
+subgraph cluster_network_br_int {
+network_br_int [ shape = plaintext, label = <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="5" CELLPADDING="5" BGCOLOR="white">
+<TR>
+<TD COLSPAN="8" BORDER="0" BGCOLOR="white" PORT="OVSbr_int">OVS br_int</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1" BGCOLOR="#b2f379" PORT="qr_04542d8f_13">[25] qr-04542d8f-13</TD>
+<TD ROWSPAN="1" COLSPAN="1" BGCOLOR="#b2f379" PORT="tapfd625661_7e">[23] tapfd625661-7e</TD>
+<TD ROWSPAN="1" COLSPAN="1" BGCOLOR="#c079f3" PORT="qr_e503ba9c_89">[24] qr-e503ba9c-89</TD>
+<TD ROWSPAN="1" COLSPAN="1" BGCOLOR="#c079f3" PORT="tapb9083cd7_6f">[22] tapb9083cd7-6f</TD>
+<TD ROWSPAN="1" COLSPAN="1" BGCOLOR="#b2f379" PORT="qr_fb2585a7_bd">[27] qr-fb2585a7-bd</TD>
+<TD ROWSPAN="1" COLSPAN="1" BGCOLOR="#b2f379" PORT="tapfd625661_7e">[23] tapfd625661-7e</TD>
+<TD ROWSPAN="1" COLSPAN="1" BGCOLOR="#c079f3" PORT="qr_5de9034a_db">[26] qr-5de9034a-db</TD>
+<TD ROWSPAN="1" COLSPAN="1" BGCOLOR="#c079f3" PORT="tapb9083cd7_6f">[22] tapb9083cd7-6f</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1" BGCOLOR="#b2f379" PORT="qr_04542d8f_13tag_3">VLAN tag:3</TD>
+<TD ROWSPAN="1" COLSPAN="1" BGCOLOR="#b2f379" PORT="tapfd625661_7etag_3">VLAN tag:3</TD>
+<TD ROWSPAN="1" COLSPAN="1" BGCOLOR="#c079f3" PORT="qr_e503ba9c_89tag_2">VLAN tag:2</TD>
+<TD ROWSPAN="1" COLSPAN="1" BGCOLOR="#c079f3" PORT="tapb9083cd7_6ftag_2">VLAN tag:2</TD>
+<TD ROWSPAN="1" COLSPAN="1" BGCOLOR="#b2f379" PORT="qr_fb2585a7_bdtag_3">VLAN tag:3</TD>
+<TD ROWSPAN="1" COLSPAN="1" BGCOLOR="#b2f379" PORT="tapfd625661_7etag_3">VLAN tag:3</TD>
+<TD ROWSPAN="1" COLSPAN="1" BGCOLOR="#c079f3" PORT="qr_5de9034a_dbtag_2">VLAN tag:2</TD>
+<TD ROWSPAN="1" COLSPAN="1" BGCOLOR="#c079f3" PORT="tapb9083cd7_6ftag_2">VLAN tag:2</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1" BGCOLOR="#b2f379" PORT="qr_04542d8f_1310.0.3.1/24">10.0.3.1/24</TD>
+<TD ROWSPAN="1" COLSPAN="1" BGCOLOR="#b2f379" PORT="tapfd625661_7e10.0.3.2/24">10.0.3.2/24</TD>
+<TD ROWSPAN="1" COLSPAN="1" BGCOLOR="#c079f3" PORT="qr_e503ba9c_8910.0.2.1/24">10.0.2.1/24</TD>
+<TD ROWSPAN="1" COLSPAN="1" BGCOLOR="#c079f3" PORT="tapb9083cd7_6f10.0.2.2/24">10.0.2.2/24</TD>
+<TD ROWSPAN="1" COLSPAN="1" BGCOLOR="#b2f379" PORT="qr_fb2585a7_bd10.0.3.5/24">10.0.3.5/24</TD>
+<TD ROWSPAN="1" COLSPAN="1" BGCOLOR="#b2f379" PORT="tapfd625661_7e10.0.3.2/24">10.0.3.2/24</TD>
+<TD ROWSPAN="1" COLSPAN="1" BGCOLOR="#c079f3" PORT="qr_5de9034a_db10.0.2.5/24">10.0.2.5/24</TD>
+<TD ROWSPAN="1" COLSPAN="1" BGCOLOR="#c079f3" PORT="tapb9083cd7_6f10.0.2.2/24">10.0.2.2/24</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="2" BGCOLOR="#b2f379" PORT="private2">private2</TD>
+<TD ROWSPAN="1" COLSPAN="2" BGCOLOR="#c079f3" PORT="private1">private1</TD>
+<TD ROWSPAN="1" COLSPAN="2" BGCOLOR="#b2f379" PORT="private2">private2</TD>
+<TD ROWSPAN="1" COLSPAN="2" BGCOLOR="#c079f3" PORT="private1">private1</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="4" BGCOLOR="#ff9933" PORT="router1">router1</TD>
+<TD ROWSPAN="1" COLSPAN="4" BGCOLOR="#ff9933" PORT="router2">router2</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="8" BGCOLOR="#ffcc00" PORT="patch_tun">[19] patch-tun</TD>
+</TR>
+</TABLE>>];
+
+}
+
+subgraph cluster_network_br_tun {
+network_br_tun [ shape = plaintext, label = <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="5" CELLPADDING="5" BGCOLOR="white">
+<TR>
+<TD COLSPAN="7" BORDER="0" BGCOLOR="white" PORT="OVSbr_tun">OVS br_tun</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="7" BGCOLOR="#ffcc00" PORT="patch_int">[1] patch-int</TD>
+</TR>
+</TABLE>>];
+
+}
+
+}
+
+NetworkNode:s -> br_ex:n [color = "#0066cc", penwidth = "4", style="invis"]
+network_br_int:patch_tun:s -> network_br_tun:patch_int:n [color = "#0066cc", penwidth = "4"]
+br_ex:qg_e6c19c2c_8c:s -> network_br_int:qr_04542d8f_13:n [color = "#0066cc", penwidth = "4"]
+br_ex:qg_e6c19c2c_8c:s -> network_br_int:qr_e503ba9c_89:n [color = "#0066cc", penwidth = "4"]
+br_ex:qg_718e237a_3a:s -> network_br_int:qr_fb2585a7_bd:n [color = "#0066cc", penwidth = "4"]
+br_ex:qg_718e237a_3a:s -> network_br_int:qr_5de9034a_db:n [color = "#0066cc", penwidth = "4"]
+}
+
+
+}
+

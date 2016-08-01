@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>DON: Internal View</title>
+        <link rel="stylesheet" type="text/css" href="don.css">
+        <script type="text/javascript">
+            function download(){
+                var a = document.createElement("a");
+                var now = new Date();
+                var timestamp = now.toISOString()
+                a.href = "{{STATIC_URL}}don/don.svg";
+                a.download = "DON-Internal-View-"+timestamp+".svg";
+                a.click();
+
+            }
+        </script>
+	</head>
+	<body>
+    <div id="internal">
+        <table width="100%">
+        <th class="title">
+            DON: Internal View
+        </th>
+        <tr>
+            <td align="right" class="table_header">
+            <button class="btn btn-default btn-sm ajax-modal btn-launch ajax-update"
+                onClick="location.href='/dashboard/don/analyze'"><span class="fa fa-search"></span>
+                Analyze</button>
+            &nbsp;&nbsp;&nbsp;
+            <button class="btn btn-default btn-sm ajax-modal btn-launch ajax-update"
+                onClick="location.href='/dashboard/don/ping'">
+                Ping Tracer</button>
+            &nbsp;&nbsp;&nbsp;
+            <button class="btn btn-default btn-sm"
+                onClick="download();"><span class="fa fa-download"></span>
+                Download Graph</button>
+            </td>
+        </tr>
+        <tr>
+            <td><object class="emb" data="{{STATIC_URL}}don/don.svg" width="100%" height="850" type="image/svg+xml" id="don_svg"></object></td>
+            <!-- <img src='test.png'> -->
+        </tr>
+    </table>
+    </div>
+	</body>
+</html>
+

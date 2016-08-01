@@ -1,0 +1,21 @@
+digraph DON_compute {
+graph [fontsize=10 fontname="Helvetica"];
+node [fontsize=10 fontname="Helvetica"];
+rankdir = TB;
+ranksep = 1;
+concentrate = true;
+compound = true;
+edge [dir=none]
+
+subgraph cluster_ComputeNode {
+ComputeNode [ shape = plaintext, label = <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="5" CELLPADDING="5" BGCOLOR="red">
+<TR>
+<TD COLSPAN="1" BORDER="0" BGCOLOR="yellow" PORT="ComputeNode">Compute Node</TD>
+</TR>
+</TABLE>>];
+
+}
+
+subgraph cluster_Nova {
+style=filled

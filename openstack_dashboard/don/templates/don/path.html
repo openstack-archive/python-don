@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>DON: Ping Tracer</title>
+        <link rel="stylesheet" type="text/css" href="don.css">
+    </head>
+    <body>
+    <div id="internal">
+        <table width="100%">
+        <th class="title">
+            DON: Ping Tracer
+        </th>
+        <tr>
+            <td align="right" class="clickme">
+            <button class="btn btn-default btn-sm ajax-modal btn-launch ajax-update"
+                onClick="history.go(-1)">
+                Back</button>
+            </td>
+        </tr>
+        <tr>
+            <td><object class="emb" data="{{STATIC_URL}}don/ping.svg" width="100%" height="850" type="image/svg+xml" id="ping_svg"></object></td>
+        </tr>
+    </table>
+    </div>
+    </body>
+</html>
+

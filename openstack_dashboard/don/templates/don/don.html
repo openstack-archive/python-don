@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <title>DON: Diagnosing OpenStack Networking</title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+        <script>
+        $(document).ready(function() {
+            var $loading = $('#inprogress').hide();
+            function get_status(){
+                console.log('getting status')
+                var status = $.ajax({
+                    type:"GET",
+                    url: '/dashboard/don/status',
+                    // async: false,
+                    success: function(data){
+                        console.log('success')
+                        $("#content .value").html(data.status);
+                    }
+                });
+            }
+            $loading.hide();
+            $('.collect').click(function(){
+
+                $.ajax({
+                    type: "GET",
+                    url: "/horizon/don/collect",
+                    beforeSend: function(){
+                        $loading.show();
+                        $("#content .value").html("");
+                        $loading.attr('style','block');
+                        poll = setInterval(function(){get_status();}, 1000);
+                    },
+                    success: function(data) {
+                        $loading.hide();
+                        console.log(data.collect_status)
+                        clearInterval(poll);
+                        $("#content .value").html(data.collect_status);
+                    },
+                    error: function(data){
+                        clearInterval(poll);
+                        $("#content .value").html("Error while collecting data..");
+                        $("#loading_img").hide();
+                    }
+                });
+
+            });
+
+
+        });
+        </script>
+    </head>
+    <body>
+    <div id="main">
+        <table width="100%" border-spacing="10px">
+        <th class="title">
+            DON: Diagnosing OpenStack Networking
+        </th>
+    <tr>
+        <td><BR>
+        <span class="label label-primary">Step 1</span> Collect <nbsp>
+        <span class="label label-primary">Step 2</span> Visualize <nbsp>
+        <span class="label label-primary">Step 3</span> Analyze or Ping Trace <nbsp></td>
+
+    </tr>
+        <tr>
+            <td align="right" class="table_header">
+            <button class="btn btn-default collect"><span class="fa fa-download"></span>    Collect</button>  
+
+            <button class="btn btn-default btn-sm ajax-modal btn-launch ajax-update"
+                onClick="location.href='/dashboard/don/view'"><span class="fa fa-pencil"></span>
+                    Visualize</button>
+            </td>
+        </tr>
+        <tr>
+            <!-- Showing loading icon and collection status  -->
+            <td align="center">
+                <BR><BR><BR>
+                <div class="alert alert-dismissable alert-info" id="inprogress" style="display: none; width:30%;" >
+                  <!-- <h5>{{collect_status}}</h5> -->
+                  <img id='loading_img' src='{{STATIC_URL}}don/loading_dots.gif'  /><BR>
+                  <p>  Collecting Data </p>
+                <div id='content'>
+                  <strong><p class='value'>{{collect_status}}</p></strong>
+                </div>
+                </div>
+            </td>
+        </tr>                
+    </table>
+    </div>
+
+    </body>
+</html>
+
