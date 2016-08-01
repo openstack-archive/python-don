@@ -1,0 +1,7 @@
+[run]
+branch = True
+source = openstack_dashboard
+omit = openstack_dashboard/openstack/*
+
+[report]
+ignore_errors = True
