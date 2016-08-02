@@ -1,5 +1,12 @@
 # DON: Diagnosing OpenStack Networking
 
+An OpenStack Horizon dashboard to diagnose OpenStack networking issues.
+
+* Free software: Apache license
+* Source: https://git.openstack.org/openstack/python-don
+* Bugs: https://bugs.launchpad.net/python-don
+
+## Overview
 > [Presented in the OpenStack Liberty Summit, Vancouver, May, 2015]
 (https://www.openstack.org/summit/vancouver-2015/summit-videos/presentation/don-diagnosing-ovs-in-neutron "DON Presentation at OpenStack Liberty Summit, Vancouver, May 2015").
 
@@ -53,11 +60,6 @@ and also allows the user to do ping tracing
 
 0. You must have Ansible (version 2.0 or later) installed in execution server
 1. Clone DON source to execution server
-2. Open shell promt and execute the below command from DON directory 
+2. Open shell prompt and execute the below command from DON directory
 3. `ansible-playbook don_playbook.yaml -i <inventory file path> --ask-pass`
 
-## TODO/Known Issues:
-Please look at issues in the github repo. If you have questions, bugs, or feature requests, file an issue or send email
-to:
-
-* Amit Saha (amisaha+don@cisco.com)
