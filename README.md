@@ -38,6 +38,12 @@ does OVS tests and ping tests,
 and also allows the user to do ping tracing
 ![DON: Ping Tracer](/openstack_dashboard/don/ovs/static/don_ping_notworking.png "DON: Ping Tracer")
 
+## DON Schematic
+DON first collects the output of several commands, parses the output, and
+creates a JSON database. This database is then used by the analyzer module, the
+visualizer module, and the test module.
+<img src="/images/don_schematic.png" width="51%" align="middle" alt="DON Schematic">
+
 
 ## How to Run:
 
