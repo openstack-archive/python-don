@@ -25,6 +25,12 @@ completely automated service for verifying and diagnosing the
 networking functionality provided by OVS. This service verifies (or points out
 deviations) that the user configuration is indeed reflected in the underlying
 infrastructure and presents the results in an intuitive graphical display.
+## Feature Lists:
+
+0. Visualize networking internals
+1. Perform OVS and Ping tests between all pairs of VMs
+2. Perform Ping tracing between any two VMs
+3. Allows storing collected data so that it can be retrieved later and displayed
 
 As an example, given the following Neutron network topology:
 ![Neutron: Network Topology](/openstack_dashboard/don/ovs/static/net_topology.png "Neutron: Network Topology")
@@ -59,8 +65,11 @@ visualizer module, and the test module.
 
 0. You must have a [devstack setup running on a single VM](http://docs.openstack.org/developer/devstack/guides/single-vm.html).
 1. [Download and source the project specific rc file](http://docs.openstack.org/user-guide/common/cli_set_environment_variables_using_openstack_rc.html).
-2. Copy the DON source to Horizon directory.(/opt/stack/horizon/)
-3. Restart Horizon by executing `sudo service apache2 restart`
+2. Copy openstack_dashboard/, static/ directories from DON source to Horizon directory.(/opt/stack/horizon/)
+3. Copy etc/don/ from DON source to /etc 
+4. Edit /etc/don/don.conf and change `deployment_type=devstack` under [DEFAULT] section.
+5. To allow DON to do Ping tests between all pairs of VMs, configure VM credentials manually into /opt/stack/horizon/openstack_dashboard/don/ovs/credentials.yaml
+6. Restart Horizon by executing `sudo service apache2 restart`
 
 ### Steps for Multinode Openstack:
 
