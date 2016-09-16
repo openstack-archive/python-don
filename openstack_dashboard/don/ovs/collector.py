@@ -1,29 +1,38 @@
+# -*- coding: utf-8 -*-
+
+# Licensed under the Apache License, Version 2.0 (the "License"); you may
+# not use this file except in compliance with the License. You may obtain
+# a copy of the License at
 #
-# This file runs a whole bunch of commands (on the shell), parses their outputs
-# and constructs a dictionary of extracted information.
+#      http://www.apache.org/licenses/LICENSE-2.0
 #
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations
+# under the License.
+
+import argparse
+import ConfigParser
+import os
 import pprint
 import re
-import argparse
-import os
-from common import settings, debug, error, status_update, dump_json
-from common import execute_cmd, connect_to_box, get_vm_credentials
-import ConfigParser
-# from analyzer import analyze
+
+import openstack_dashboard.don.ovs.common as common
 
 don_config = ConfigParser.ConfigParser()
 try:
     don_config.read('/etc/don/don.conf')
-except Exception, e:
-    print e
+except Exception as e:
+    print(e.value)
 deployment_type = don_config.get('DEFAULT', 'deployment_type')
 
 
 def get_env(filename):
     try:
         lines = open(os.getcwd() + os.sep + filename, 'r').read().splitlines()
-    except IOError, e:
-        print "%s :%s" % (e.args[1], filename)
+    except IOError as e:
+        print("%s :%s" % (e.args[1], filename))
         raise
     env = {}
     for line in lines:
@@ -53,7 +62,7 @@ info = {
 
 def add_new_command(cmd_dict, cmd_key, cmd):
     if cmd_dict.has_key(cmd_key):
-        error(cmd_key + ' already exists in command dictionary')
+        common.error(cmd_key + ' already exists in command dictionary')
         return
     cmd_dict[cmd_key] = cmd
 
@@ -61,23 +70,21 @@ def add_new_command(cmd_dict, cmd_key, cmd):
 def record_linuxbridge(bridge, interface_list):
     brctl_dict = info['brctl']
     if brctl_dict.has_key(bridge):
-        error('Bridge ' + bridge + ' repeated! Overwriting!')
+        common.error('Bridge ' + bridge + ' repeated! Overwriting!')
     brctl_dict[bridge] = {'interfaces': interface_list}
 
 
 def get_bridge_entry(br):
     bridge_dict = info['bridges']
     if not bridge_dict.has_key(br):
-        error('Bridge ' + br + ' does not exist! Supported bridges: ' +
-              str(bridge_dict.keys()))
+        common.error('Bridge ' + br + ' does not exist! Supported bridges: ' +
+                     str(bridge_dict.keys()))
         return None
     return bridge_dict.get(br)
 
 
-#
 # Parser functions (for each command). Each function has the sample input
 # as a comment above it.
-#
 '''
   <uuid>31b1cfcc-ca85-48a9-a84a-8b222d377080</uuid>
       <nova:name>VM1</nova:name>
@@ -216,7 +223,7 @@ def ovs_vsctl_show_parser(parse_this):
         if m:
             bridge = str(m.group(1))
             if not bridge_dict.has_key(bridge):
-                error(
+                common.error(
                     'Skipping bridge [' + bridge + ']! Supported bridges: ' +
                     str(bridge_dict.keys()))
                 bridge = None
@@ -305,8 +312,7 @@ OFPT_GET_CONFIG_REPLY (xid=0x4): frags=normal miss_send_len=0
 def ovs_ofctl_show_br_parser(bridge, parse_this):
     bridge_dict = info['bridges']
     if not bridge_dict.has_key(bridge):
-        error('Skipping bridge [' + bridge +
-              ']! Supported bridges: ' + str(bridge_dict.keys()))
+        common.error('Skipping bridge [' + bridge + ']! Supported bridges: ' + str(bridge_dict.keys()))
         return
     bridge_entry = bridge_dict.get(bridge)
     pprint.pprint(bridge_entry)
@@ -334,8 +340,6 @@ def ovs_ofctl_show_br_parser(bridge, parse_this):
             port_entry = bridge_entry['ports'][port]
             port_entry['id'] = port_id
             port_entry['mac'] = port_mac
-
-    pass
 
 # These three are all wrappers for each of the three bridges
 
@@ -661,7 +665,7 @@ def ip_netns_parser(parse_this):
 
 
 def dummy_parser(parse_this):
-    debug('Dummy Parser :-)')
+    common.debug('Dummy Parser :-)')
     pass
 
 
@@ -860,8 +864,8 @@ def check_args():
                         default="don.json", type=str)
     args = parser.parse_args()
 
-    settings['debug'] = args.debug
-    settings['info_file'] = args.info_file
+    common.settings['debug'] = args.debug
+    common.settings['info_file'] = args.info_file
 
 
 def all_commands_executed(commands):
@@ -874,15 +878,15 @@ def all_commands_executed(commands):
 
 
 def get_vm_info_from_compute(cmd):
-    output = execute_cmd(['nova', 'hypervisor-list'],
-                         sudo=False, shell=False, env=myenv).split('\n')
+    output = common.execute_cmd(['nova', 'hypervisor-list'],
+                                sudo=False, shell=False, env=myenv).split('\n')
     compute_list = get_hypervisor(output)
     vm_info = []
-    compute_creds = get_vm_credentials()
+    compute_creds = common.get_vm_credentials()
     for node in compute_list:
         creds = compute_creds.get('hypervisor').get(
             node, compute_creds.get('hypervisor')['default'])
-        ssh = connect_to_box(node, creds['username'], creds['password'])
+        ssh = common.connect_to_box(node, creds['username'], creds['password'])
         (stdin, out, err) = ssh.exec_command('sudo ' + cmd)
         vm_info.extend(out.read().splitlines())
         ssh.close()
@@ -890,11 +894,11 @@ def get_vm_info_from_compute(cmd):
 
 
 def exec_on_remote(cmd):
-    node_details = get_vm_credentials()
+    node_details = common.get_vm_credentials()
     creds = node_details.get('network')
     # print "sudo "+cmd
-    ssh = connect_to_box(creds['hostname'], creds[
-                         'username'], creds['password'])
+    ssh = common.connect_to_box(creds['hostname'], creds[
+        'username'], creds['password'])
     (stdin, out, err) = ssh.exec_command(cmd)
     if len(err.read()):
         return []
@@ -923,7 +927,7 @@ def main():
         if (all_commands_executed(commands) or iteration >= 10):
             break
         iteration += 1
-        status_update('Iteration: ' + str(iteration))
+        common.status_update('Iteration: ' + str(iteration))
 
         sorted_keys = sorted(commands.items(), key=lambda (k, v): v['order'])
         for (cmd, dontcare) in sorted_keys:
@@ -932,7 +936,7 @@ def main():
                 if commands[cmd].get('done', False):
                     continue
                 if commands[cmd].has_key('help'):
-                    status_update(commands[cmd]['help'])
+                    common.status_update(commands[cmd]['help'])
                 shell = commands[cmd].get('shell', False)
                 env = None
                 if commands[cmd].get('env', False):
@@ -944,22 +948,25 @@ def main():
                         commands[cmd]['output'] = exec_on_remote(
                             commands[cmd]['cmd'])
                     if cmd == 'cat_instance':
-                        commands[cmd]['output'] = get_vm_info_from_compute(commands[
-                                                                           cmd]['cmd'])
-                        print commands[cmd]['output']
+                        commands[cmd][
+                            'output'] = common.get_vm_info_from_compute(
+                                commands[cmd]['cmd'])
+                        print(commands[cmd]['output'])
                     else:
-                        commands[cmd]['output'] = execute_cmd(
-                            commands[cmd]['cmd'], sudo=sudo, shell=shell, env=env).split('\n')
+                        commands[cmd]['output'] = common.execute_cmd(
+                            commands[cmd]['cmd'], sudo=sudo,
+                            shell=shell, env=env).split('\n')
                 else:
-                    commands[cmd]['output'] = execute_cmd(
-                        commands[cmd]['cmd'], sudo=sudo, shell=shell, env=env).split('\n')
+                    commands[cmd]['output'] = common.execute_cmd(
+                        commands[cmd]['cmd'],
+                        sudo=sudo, shell=shell, env=env).split('\n')
                 commands[cmd]['parser'](commands[cmd]['output'])
                 commands[cmd]['done'] = True
 
-    debug('============= COMMANDS =============')
-    # debug(pprint.pformat(commands))
-    status_update('Writing collected info into ' + settings['info_file'])
-    dump_json(info, settings['info_file'])
+    common.debug('============= COMMANDS =============')
+    common.status_update(
+        'Writing collected info into ' + common.settings['info_file'])
+    common.dump_json(info, common.settings['info_file'])
 
 if __name__ == "__main__":
     main()
