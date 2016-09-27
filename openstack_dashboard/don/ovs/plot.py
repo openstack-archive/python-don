@@ -1,19 +1,36 @@
+# Licensed under the Apache License, Version 2.0 (the "License"); you may
+# not use this file except in compliance with the License. You may obtain
+# a copy of the License at
 #
-# plot.py: Generates an SVG file showing the networking internals of a compute node.
+#      http://www.apache.org/licenses/LICENSE-2.0
 #
-import pprint
-import subprocess
-import re
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations
+# under the License.
 import argparse
-import sys
+import pprint
 import random
+import re
+import subprocess
+import sys
 
-from common import settings, debug, warning
-from common import load_json, get_subnet
-from common import get_vlan_tag, get_intf_ip, get_ip_network
+from common import debug
+from common import get_intf_ip
+from common import get_ip_network
+from common import get_subnet
+from common import get_vlan_tag
+from common import load_json
+from common import settings
+from common import warning
 
 
-class DotGenerator:
+class DotGenerator(object):
+    """Generates an SVG file showing the network internals of
+
+       a compute node.
+    """
 
     def __init__(self, in_json_filename,
                  compute_dot_file, compute_svg_file,
@@ -236,34 +253,34 @@ class DotGenerator:
         return port_count
 
     def __html_row_open(self):
-        print '<TR>'
+        print('<TR>')
 
     def __html_row_close(self):
-        print '</TR>'
+        print('</TR>')
 
     def __html_row(self, name, rspan, cspan, color, tag=None):
         # tags do not allow "-" (dash) in DOT language. Convert to "_"
         # (underscore)
         if tag:
-            print '<TD ROWSPAN="%d" COLSPAN="%d" BGCOLOR="%s" PORT="%s">%s</TD>' % (rspan, cspan, color, tag.replace('-', '_'), name)
+            print('<TD ROWSPAN="%d" COLSPAN="%d" BGCOLOR="%s" PORT="%s">%s</TD>' % (rspan, cspan, color, tag.replace('-', '_'), name))
         else:
-            print '<TD ROWSPAN="%d" COLSPAN="%d" BGCOLOR="%s">%s</TD>' % (rspan, cspan, color, name)
+            print('<TD ROWSPAN="%d" COLSPAN="%d" BGCOLOR="%s">%s</TD>' % (rspan, cspan, color, name))
         pass
 
     def __html_edge(selft, src_tag, dst_tag, color, penwidth="4", style=None):
         src_tag = src_tag.replace('-', '_')
         dst_tag = dst_tag.replace('-', '_')
         if not style:
-            print '%s:s -> %s:n [color = "%s", penwidth = "%s"]' % (src_tag,
+            print('%s:s -> %s:n [color = "%s", penwidth = "%s"]' % (src_tag,
                                                                     dst_tag,
                                                                     color,
-                                                                    penwidth)
+                                                                    penwidth))
         else:
-            print '%s:s -> %s:n [color = "%s", penwidth = "%s", style="%s"]' % (src_tag,
+            print('%s:s -> %s:n [color = "%s", penwidth = "%s", style="%s"]' % (src_tag,
                                                                                 dst_tag,
                                                                                 color,
                                                                                 penwidth,
-                                                                                style)
+                                                                                style))
 
     def __digraph_open(self, tag):
         msg = 'digraph DON_' + tag + ' {' + \
@@ -276,36 +293,36 @@ concentrate = true;
 compound = true;
 edge [dir=none]
 '''
-        print msg
+        print(msg)
 
     def __digraph_close(self):
         msg = '\n}\n'
-        print msg
+        print(msg)
 
     def __cluster_name(self, tag, col_span, color="white"):
         self.__html_row_open()
         port = tag.replace(' ', '').replace('-', '_')
-        print '<TD COLSPAN="%d" BORDER="0" BGCOLOR="%s" PORT="%s">%s</TD>' % (col_span, color, port, tag)
+        print('<TD COLSPAN="%d" BORDER="0" BGCOLOR="%s" PORT="%s">%s</TD>' % (col_span, color, port, tag))
         self.__html_row_close()
 
     def __cluster_open_plain(self, tag, label=None):
-        print 'subgraph cluster_%s {' % (tag)
-        print 'style=filled'
+        print('subgraph cluster_%s {' % (tag))
+        print('style=filled')
         if label:
-            print 'label="%s"' % (label)
+            print('label="%s"' % (label))
 
     def __cluster_close_plain(self):
-        print '}\n'
+        print('}\n')
 
     def __cluster_open(self, tag, color="white"):
-        print 'subgraph cluster_%s {' % (tag)
-        print '%s [ shape = plaintext, label = <' % (tag)
-        print '<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="5" CELLPADDING="5" BGCOLOR="%s">' % (color)
+        print('subgraph cluster_%s {' % (tag))
+        print('%s [ shape = plaintext, label = <' % (tag))
+        print('<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="5" CELLPADDING="5" BGCOLOR="%s">' % (color))
         pass
 
     def __cluster_close(self):
-        print '</TABLE>>];\n'
-        print '}\n'
+        print('</TABLE>>];\n')
+        print('}\n')
         pass
 
     def __plot_title_edges(self, tag):
@@ -451,7 +468,8 @@ edge [dir=none]
                 if br_int['ports'].has_key(qvo_port):
                     tag = br_int['ports'][qvo_port]['tag']
                     self.__html_row('VLAN tag:' + tag, row_span, col_span,
-                                    self.__get_vlan_color(tag), qvo_port + 'tag_' + tag)
+                                    self.__get_vlan_color(tag),
+                                    qvo_port + 'tag_' + tag)
         self.__html_row_close()
 
         col_span = self.__get_total_vm_port_count()
@@ -468,9 +486,7 @@ edge [dir=none]
         self.__html_row_close()
 
         self.__cluster_close()
-        pass
 
-    # TODO
     def __plot_br_ex_to_br_int(self):
         namespaces = self.info['namespaces']
 
@@ -492,7 +508,6 @@ edge [dir=none]
                     dst_tag = 'network_br_int:' + intf
                     self.__html_edge(src_tag, dst_tag,
                                      self.__get_color('edge'))
-        pass
 
     def __plot_br_ex_network(self):
         routers = self.info['routers']
@@ -571,9 +586,11 @@ edge [dir=none]
                             port_id = '[' + br_int['ports'][intf]['id'] + '] '
                             color = self.__get_vlan_color(tag, intf)
                             self.__html_row(
-                                port_id + intf, row_span, col_span, color, intf)
+                                port_id + intf, row_span,
+                                col_span, color, intf)
                             # now plot the corresponding tap interface
-                            (tap_nms, tap) = self.__get_tap_interface(nms, intf)
+                            (tap_nms, tap) = self.__get_tap_interface(nms,
+                                                                      intf)
                             tag = br_int['ports'][tap]['tag']
                             color = self.__get_vlan_color(tag, tap)
                             port_id = '[' + br_int['ports'][tap]['id'] + '] '
@@ -602,7 +619,8 @@ edge [dir=none]
 
             tag = br_int['ports'][tap_intf]['tag']
             self.__html_row('VLAN tag:' + tag, row_span, col_span,
-                            self.__get_vlan_color(tag), tap_intf + 'tag_' + tag)
+                            self.__get_vlan_color(tag),
+                            tap_intf + 'tag_' + tag)
 
         self.__html_row_close()
 
@@ -695,7 +713,6 @@ edge [dir=none]
                             color = self.__get_edge_color(src_tag, dst_tag)
                             self.__html_edge(src_tag, dst_tag, color)
                             break
-        pass
 
     def __plot_linuxbridge_to_br_int(self):
         brctl = self.info['brctl']
@@ -713,7 +730,6 @@ edge [dir=none]
                                 color = self.__get_edge_color(src_tag, dst_tag)
                                 self.__html_edge(src_tag, dst_tag, color)
                             break
-        pass
 
     def __plot_br_int_to_br_tun(self, tag):
         br_int = self.info['bridges']['br-int']['ports']
@@ -734,7 +750,6 @@ edge [dir=none]
                     self.__html_edge(src_tag, dst_tag,
                                      self.__get_color('edge'))
                     return
-        pass
 
     def plot_combined(self):
         self.outfile = open(self.combined_dot_file, 'w')
@@ -845,12 +860,15 @@ edge [dir=none]
 
 
 def check_args():
-    parser = argparse.ArgumentParser(description='Plot the compute node network internals',
-                                     formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    parser = argparse.ArgumentParser(
+        description='Plot the compute node network internals',
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('--debug', dest='debug',
-                        help='Enable debugging', default=True, action='store_true')
+                        help='Enable debugging',
+                        default=True, action='store_true')
     parser.add_argument('--info_file', dest='info_file',
-                        help='Info is read  in JSON format in this file', default="don.json", type=str)
+                        help='Info is read  in JSON format in this file',
+                        default="don.json", type=str)
     parser.add_argument('--compute_file', dest='compute_file',
                         help='[compute_file].dot and [compute_file].svg will be generated for compute node', default="compute", type=str)
     parser.add_argument('--network_file', dest='network_file',
@@ -858,7 +876,8 @@ def check_args():
     parser.add_argument('--combined_file', dest='combined_file',
                         help='[combined_file].dot and [combined_file].svg will be generated', default="don", type=str)
     parser.add_argument('--highlight_file', dest='highlight_file',
-                        help='pass and fail node are specified in this file', default=None, type=str)
+                        help='pass and fail node are specified in this file',
+                        default=None, type=str)
 
     args = parser.parse_args()
 

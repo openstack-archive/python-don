@@ -1,10 +1,22 @@
-# common.py: Common functions and data structures used by multiple modules.
+# Licensed under the Apache License, Version 2.0 (the "License"); you may
+# not use this file except in compliance with the License. You may obtain
+# a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations
+# under the License.
 
+# common.py: Common functions and data structures used by multiple modules.
+import json
 import paramiko
-import sys
-import re
 import pprint
+import re
 import subprocess
+import sys
 import yaml
 
 # Program settings
@@ -17,7 +29,7 @@ settings = {
 
 def debug(msg):
     if settings['debug']:
-        if not sys.stdout == sys.__stdout__:
+        if sys.stdout != sys.__stdout__:
             tmp = sys.stdout
             sys.stdout = sys.__stdout__
             print('DEBUG: ' + msg)
@@ -27,7 +39,7 @@ def debug(msg):
 
 
 def error(msg):
-    if not sys.stdout == sys.__stdout__:
+    if sys.stdout != sys.__stdout__:
         tmp = sys.stdout
         sys.stdout = sys.__stdout__
         print('ERROR: ' + msg)
@@ -37,7 +49,7 @@ def error(msg):
 
 
 def warning(msg):
-    if not sys.stdout == sys.__stdout__:
+    if sys.stdout != sys.__stdout__:
         tmp = sys.stdout
         sys.stdout = sys.__stdout__
         print('WARNING: ' + msg)
@@ -49,7 +61,7 @@ def warning(msg):
 def status_update(msg):
     # storing in log file for interactive display on UI
     log = open('collector_log.txt', 'w')
-    if not sys.stdout == sys.__stdout__:
+    if sys.stdout != sys.__stdout__:
         tmp = sys.stdout
         sys.stdout = sys.__stdout__
         print('STATUS: ' + msg)
@@ -61,12 +73,11 @@ def status_update(msg):
 
 
 def dump_json(json_info, json_filename):
-    import json
     try:
         outfile = open(json_filename, "w")
-    except IOError, e:
-        print e
-        print 'Couldn\'t open <%s>; Redirecting output to stdout' % json_filename
+    except IOError as e:
+        print(e)
+        print('Couldn\'t open <%s>; Redirecting output to stdout' % json_filename)
         outfile = sys.stdout
 
     json.dump(json_info, outfile)
@@ -75,12 +86,11 @@ def dump_json(json_info, json_filename):
 
 
 def load_json(json_filename):
-    import json
     try:
         infile = open(json_filename, "r")
-    except IOError, e:
-        print e
-        print 'Couldn\'t open <%s>; Error!' % json_filename
+    except IOError as e:
+        print(e)
+        print('Couldn\'t open <%s>; Error!' % json_filename)
         return None
 
     tmp = json.load(infile)
@@ -94,7 +104,7 @@ def connect_to_box(server, username, password, timeout=3):
     try:
         ssh.connect(server, username=username,
                     password=password, timeout=timeout)
-    except:
+    except Exception:
         return None
     return ssh
 # def connect_to_box (server, username, password,timeout=3) :
@@ -108,7 +118,7 @@ def ssh_cmd(ssh, cmd):
     ssh_stdin, ssh_stdout, ssh_stderr = ssh.exec_command(cmd)
     error = ssh_stderr.read()
     if len(error):
-        print 'ERROR: ' + error
+        print('ERROR: ' + error)
     output = ssh_stdout.read()
     ssh_stdout.flush()
     return output
@@ -230,13 +240,15 @@ def execute_cmd(cmd, sudo=False, shell=False, env=None):
                                    shell=shell,
                                    stderr=subprocess.STDOUT,
                                    env=env,
-                                   universal_newlines=True).replace('\t', '    ')
+                                   universal_newlines=True).replace(
+                                       '\t', '    ')
 
 
 def get_instance_ips(objs):
     ip_list = []
     for line in objs:
-        if re.search('^\+', line) or re.search('^$', line) or re.search('Networks', line):
+        if re.search('^\+', line) or re.search('^$', line) or re.search(
+            'Networks', line):
             continue
         parts = line.split('|')
         parts = [x.strip() for x in parts]
@@ -247,7 +259,8 @@ def get_instance_ips(objs):
             # excluding ipv6 ip
             if len(entry.split(',')) > 1:
                 # network = entry.split('=')[0]
-                ip = filter(lambda a: re.search("(\d+\.\d+\.\d+\.\d+)", a) is not None,
+                ip = filter(lambda a: re.search("(\d+\.\d+\.\d+\.\d+)",
+                                                a) is not None,
                             entry.split('=')[1].split(','))[0].strip()
                 ip_list.append(ip)
             else:
@@ -259,7 +272,8 @@ def get_router_names(objs):
     routers = []
 
     for line in objs:
-        if re.search('^\+', line) or re.search('^$', line) or re.search('external_gateway_info', line):
+        if re.search('^\+', line) or re.search('^$', line) or re.search(
+            'external_gateway_info', line):
             continue
         parts = line.split('|')
         parts = [x.strip() for x in parts]
@@ -272,9 +286,8 @@ def get_router_names(objs):
 def get_env(file_path):
     try:
         lines = open(file_path, 'r').read().splitlines()
-    except IOError, e:
-        print "%s :%s" % (e.args[1], file_path)
-        raise
+    except IOError as e:
+        raise "%s :%s" % (e.args[1], file_path)
     env = {}
     for line in lines:
         if line.startswith('export'):
@@ -290,6 +303,5 @@ def get_vm_credentials(config_file='credentials.yaml'):
     try:
         with open(config_file, 'r') as s:
             return yaml.safe_load(s)
-    except IOError, e:
-        print '%s :%s' % (e.args[1], config_file)
-        raise
+    except IOError as e:
+        raise '%s :%s' % (e.args[1], config_file)

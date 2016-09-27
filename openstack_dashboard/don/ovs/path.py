@@ -1,19 +1,35 @@
+# Licensed under the Apache License, Version 2.0 (the "License"); you may
+# not use this file except in compliance with the License. You may obtain
+# a copy of the License at
 #
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations
+# under the License.
+
 # path.py: Figures out a path between two IP addresses and then traces it
-#
-# HOWTO:
-#
-import re
-import pprint
-import subprocess
 import argparse
-import os.path
-import signal
 import json
+import os.path
+import pprint
+import re
+import signal
+import subprocess
 import time
-from common import error, settings, debug, status_update
-from common import load_json, execute_cmd, dump_json
-from common import ip_to_intf, intf_to_namespace, router_to_namespace
+
+from openstack_dashboard.don.ovs.common import debug
+from openstack_dashboard.don.ovs.common import dump_json
+from openstack_dashboard.don.ovs.common import error
+from openstack_dashboard.don.ovs.common import execute_cmd
+from openstack_dashboard.don.ovs.common import intf_to_namespace
+from openstack_dashboard.don.ovs.common import ip_to_intf
+from openstack_dashboard.don.ovs.common import load_json
+from openstack_dashboard.don.ovs.common import router_to_namespace
+from openstack_dashboard.don.ovs.common import settings
+from openstack_dashboard.don.ovs.common import status_update
 
 COUNT = 10  # how many packets to be captured by tcpdump
 
@@ -63,7 +79,8 @@ def qrouter_usable(qrouter, src_ip, dst_ip, username, passwd):
     return False
 
 
-def launch_ping(src_ip, dst_ip, username, passwd, count, timeout, qrouter, filename):
+def launch_ping(src_ip, dst_ip, username, passwd,
+                count, timeout, qrouter, filename):
     cmd = 'sudo ip netns exec ' + str(qrouter)
     cmd += ' python ping.py --src_ip %s --dst_ip %s --username "%s" --passwd "%s" --count %d --timeout %d' % \
         (src_ip, dst_ip, username, passwd, count, timeout)
@@ -95,7 +112,6 @@ def capture_network_packets(params, hop_list):
         net_info['pids'].append(pid)
         status_update(
             'net: tcpdump launched with pid %d for interface %s' % (pid, dev))
-    pass
 
 
 def capture_packets(params, tag='src', src_tag=None):
@@ -480,8 +496,6 @@ def path(params):
             error('Could not find next hop list from %s to %s' %
                   (src_ip, dst_ip))
         path_same_network(params, next_hop_list)
-
-    pass
 
 
 def main():

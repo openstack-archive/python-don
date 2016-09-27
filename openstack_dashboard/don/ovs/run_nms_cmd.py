@@ -1,13 +1,23 @@
+# Licensed under the Apache License, Version 2.0 (the "License"); you may
+# not use this file except in compliance with the License. You may obtain
+# a copy of the License at
 #
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations
+# under the License.
+
 # run_nms_cmd.py: This needs to be run from inside appropriate namespace
-#
 # sudo ip netns exec qrouter-ac41aab2-f9c3-4a06-8eef-f909ee1e6e50 python # run_nms_cmd.py "command"
-#
 import argparse
 import json
-from common import connect_to_box, ssh_cmd
-from common import settings
 
+from openstack_dashboard.don.ovs.common import connect_to_box
+from openstack_dashboard.don.ovs.common import settings
+from openstack_dashboard.don.ovs.common import ssh_cmd
 
 params = {}
 
@@ -45,8 +55,8 @@ def run_nms_cmd(args):
         cmd_dict['cmd'] = cmd
         cmd_dict['output'] = output
     except (KeyboardInterrupt, SystemExit):
-        print '\nkeyboardinterrupt caught (again)'
-        print '\n...Program Stopped Manually!'
+        print('\nkeyboardinterrupt caught (again)')
+        print('\n...Program Stopped Manually!')
         result = False
         raise
     cmd_dict['pass'] = result
@@ -58,17 +68,23 @@ def check_args():
     global params
 
     parser = argparse.ArgumentParser(
-        description='Run command from inside nms', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+        description='Run command from inside nms',
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('--debug', dest='debug',
-                        help='Enable debugging', default=False, action='store_true')
+                        help='Enable debugging',
+                        default=False, action='store_true')
     parser.add_argument('--host_ip', dest='host_ip',
-                        help='IP where the command will be run', type=str, required=True)
+                        help='IP where the command will be run',
+                        type=str, required=True)
     parser.add_argument('--username', dest='username',
-                        help='SSH login username (required)', type=str, required=True)
+                        help='SSH login username (required)',
+                        type=str, required=True)
     parser.add_argument('--passwd', dest='passwd',
-                        help='SSH login passwd (required)', type=str, required=True)
+                        help='SSH login passwd (required)',
+                        type=str, required=True)
     parser.add_argument('--cmd', dest='cmd',
-                        help='cmd to be run', type=str, required=True)
+                        help='cmd to be run',
+                        type=str, required=True)
     args = parser.parse_args()
 
     settings['debug'] = args.debug
@@ -85,8 +101,7 @@ def main():
 
     output_dict['pass'] = run_nms_cmd(params)
 
-    a = json.dumps(output_dict, sort_keys=True, indent=4)
-    print a
+    print(json.dumps(output_dict, sort_keys=True, indent=4))
 
 if __name__ == "__main__":
     main()

@@ -1,19 +1,30 @@
+# Licensed under the Apache License, Version 2.0 (the "License"); you may
+# not use this file except in compliance with the License. You may obtain
+# a copy of the License at
 #
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations
+# under the License.
+
 # ping.py: Runs a ping test from src_ip to dst_ip. Also provides analysis if
 # things are not okay (TBD).
 #
 # HOWTO:
 #
 # For OpenStack, this program must be run from inside the correct namespace
-#
 # sudo ip netns exec qrouter-ac41aab2-f9c3-4a06-8eef-f909ee1e6e50 python ping.py 10.0.3.3 10.0.2.4 cirros "cubswin:)"
-#
-import re
+
 import argparse
 import json
-from common import connect_to_box, ssh_cmd
-from common import settings
+import re
 
+from openstack_dashboard.don.ovs.common import connect_to_box
+from openstack_dashboard.don.ovs.common import settings
+from openstack_dashboard.don.ovs.common import ssh_cmd
 
 params = {}
 
@@ -56,8 +67,8 @@ def ping_test(src_ip, dst_ip, username, passwd, count, timeout):
                     result = True
                 break
     except (KeyboardInterrupt, SystemExit):
-        print '\nkeyboardinterrupt caught (again)'
-        print '\n...Program Stopped Manually!'
+        print('\nkeyboardinterrupt caught (again)')
+        print('\n...Program Stopped Manually!')
         raise
     cmd_dict['pass'] = result
     output_dict['command_list'].append(cmd_dict)
@@ -115,8 +126,7 @@ def main():
     output_dict['comment'] = 'PING %s to %s' % (src_ip, dst_ip)
     output_dict['pass'] = ping_success
 
-    a = json.dumps(output_dict, sort_keys=True, indent=4)
-    print a
+    print(json.dumps(output_dict, sort_keys=True, indent=4))
 
 if __name__ == "__main__":
     main()

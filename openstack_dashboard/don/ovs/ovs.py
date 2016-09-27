@@ -1,12 +1,23 @@
+# Licensed under the Apache License, Version 2.0 (the "License"); you may
+# not use this file except in compliance with the License. You may obtain
+# a copy of the License at
 #
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations
+# under the License.
+
 # ovs.py: Runs ovs-appctl command to check if A -> B flow is working fine.
-#
-#
-import re
 import argparse
 import json
-from common import debug, settings
-from common import execute_cmd
+import re
+
+from openstack_dashboard.don.ovs.common import debug
+from openstack_dashboard.don.ovs.common import execute_cmd
+from openstack_dashboard.don.ovs.common import settings
 
 params = {}
 
@@ -74,7 +85,8 @@ def ovs_test(src_port_id, dst_port_id, tag, ovs_bridge):
 
     if vlan != tag:
         output_dict['errors'].append(
-            '%s learnt on vlan %s but should have been learnt on vlan %s on port %s' % (smac, vlan, tag, port))
+            '%s learnt on vlan %s but should have been learnt on vlan %s on port %s' % (
+                smac, vlan, tag, port))
         output_dict['pass'] = False
         return False
     output_dict['debugs'].append(
@@ -116,12 +128,14 @@ def ovs_test(src_port_id, dst_port_id, tag, ovs_bridge):
             output_dict['debugs'].append(
                 'Packet forwarded to correct port %s' % egress_port)
         else:
-            output_dict['errors'].append('Packet forwarded to incorrect port %s, expected %s' %
-                                         (egress_port, src_port_id))
+            output_dict['errors'].append(
+                'Packet forwarded to incorrect port %s, expected %s' %
+                (egress_port, src_port_id))
             result = False
     else:
-        output_dict['errors'].append('No egress port assigned to packet! Expected %s' %
-                                     src_port_id)
+        output_dict['errors'].append(
+            'No egress port assigned to packet! Expected %s' %
+            src_port_id)
         result = False
 
     output_dict['pass'] = result
@@ -132,17 +146,23 @@ def check_args():
     global params
 
     parser = argparse.ArgumentParser(
-        description='OVS test', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+        description='OVS test',
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('--debug', dest='debug',
-                        help='Enable debugging', default=False, action='store_true')
+                        help='Enable debugging',
+                        default=False, action='store_true')
     parser.add_argument('--src_port_id', dest='src_port_id',
-                        help='OVS src port id (required)', type=str, required=True)
+                        help='OVS src port id (required)',
+                        type=str, required=True)
     parser.add_argument('--dst_port_id', dest='dst_port_id',
-                        help='OVS dst port id (required)', type=str, required=True)
+                        help='OVS dst port id (required)',
+                        type=str, required=True)
     parser.add_argument(
-        '--tag', dest='tag', help='VLAN tag of port (required)', type=str, required=True)
+        '--tag', dest='tag', help='VLAN tag of port (required)',
+        type=str, required=True)
     parser.add_argument('--ovs_bridge', dest='ovs_bridge',
-                        help='OVS bridge to be tested (required)', type=str, required=True)
+                        help='OVS bridge to be tested (required)',
+                        type=str, required=True)
     args = parser.parse_args()
 
     settings['debug'] = args.debug
@@ -165,12 +185,12 @@ def main():
     ovs_success = ovs_test(src_port_id, dst_port_id, tag, ovs_bridge)
 
     output_dict[
-        'comment'] = 'ovs %s port %s -->  %s' % (ovs_bridge, src_port_id, dst_port_id)
+        'comment'] = 'ovs %s port %s -->  %s' % (
+            ovs_bridge, src_port_id, dst_port_id)
     output_dict['pass'] = ovs_success
 
     a = json.dumps(output_dict, sort_keys=True, indent=4)
-    print a
-    pass
+    print(a)
 
 if __name__ == "__main__":
     main()

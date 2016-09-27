@@ -1,22 +1,35 @@
+# Licensed under the Apache License, Version 2.0 (the "License"); you may
+# not use this file except in compliance with the License. You may obtain
+# a copy of the License at
 #
-# analyzer.py:
+#      http://www.apache.org/licenses/LICENSE-2.0
 #
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations
+# under the License.
+
 # This file implements the following:
 # 1. Analysis of the collected info
 # 2. Report any problems
 # 3. Report what is correct
-#
-import pprint
-import re
+
 import argparse
-import subprocess
+from itertools import combinations
 import json
 import os
-from itertools import combinations
-
-from common import settings, debug, get_router
-from common import load_json, get_subnet, is_network_public
+import pprint
+import re
+import subprocess
 import yaml
+
+from openstack_dashboard.don.ovs.common import debug
+from openstack_dashboard.don.ovs.common import get_router
+from openstack_dashboard.don.ovs.common import get_subnet
+from openstack_dashboard.don.ovs.common import is_network_public
+from openstack_dashboard.don.ovs.common import load_json
+from openstack_dashboard.don.ovs.common import settings
 
 tick = '&#10004;'
 cross = '&#10008;'
@@ -146,9 +159,8 @@ def get_vm_credentials(config_file='credentials.yaml'):
     try:
         with open(config_file, 'r') as s:
             return yaml.safe_load(s)
-    except IOError, e:
-        print '%s :%s' % (e.args[1], config_file)
-        raise
+    except IOError as e:
+        raise '%s :%s' % (e.args[1], config_file)
 
 
 def test_ping(info):
@@ -203,7 +215,8 @@ def run_ovs_command(cmd, comment=''):
     return subprocess.check_output(cmd,
                                    shell=True,
                                    stderr=subprocess.STDOUT,
-                                   universal_newlines=True).replace('\t', '    ')
+                                   universal_newlines=True).replace(
+                                       '\t', '    ')
 
 
 def process_ovs_output(output):
@@ -361,8 +374,9 @@ def analyze(json_filename, params):
 
 
 def check_args():
-    parser = argparse.ArgumentParser(description='Static analysis of output of commands',
-                                     formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    parser = argparse.ArgumentParser(
+        description='Static analysis of output of commands',
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('--debug', dest='debug',
                         help='Enable debugging',
                         default=True, action='store_true')

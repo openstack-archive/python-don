@@ -1,20 +1,33 @@
-from horizon import views
-from django.http import HttpResponse
+# Licensed under the Apache License, Version 2.0 (the "License"); you may
+# not use this file except in compliance with the License. You may obtain
+# a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations
+# under the License.
+
 from django.conf import settings
-from plot import DotGenerator
-import os
-import subprocess
-from .forms import PingForm
-# from django.shortcuts import render_to_response
-from horizon import messages
-import analyzer
-import path
-from common import execute_cmd, get_instance_ips, get_env, get_router_names
-import json
-import shlex
-
-
+from django.http import HttpResponse
 from django.shortcuts import render
+from forms import PingForm
+from horizon import messages
+from horizon import views
+import json
+import os
+import shlex
+import subprocess
+
+import openstack_dashboard.don.ovs.analyzer as analyzer
+from openstack_dashboard.don.ovs.common import execute_cmd
+from openstack_dashboard.don.ovs.common import get_env
+from openstack_dashboard.don.ovs.common import get_instance_ips
+from openstack_dashboard.don.ovs.common import get_router_names
+import openstack_dashboard.don.ovs.path as path
+from openstack_dashboard.don.ovs.plot import DotGenerator
 
 
 class IndexView(views.APIView):
@@ -31,8 +44,6 @@ def index(request):
 
 
 def view(request):
-    # import pdb
-    # pdb.set_trace()
     pwd = settings.ROOT_PATH  # +'/openstack_dashboard/dashboards/admin/don/'
 
     JSON_FILE = pwd + '/don/ovs/don.json'
@@ -53,7 +64,6 @@ def view(request):
     COMBINED_SVG_FILE = static_path + '/don/don.svg'
 
     macro = {}
-    # return HttpResponseRedirect('static/view.html')
 
     plotter = DotGenerator(JSON_FILE,
                            COMPUTE_DOT_FILE,
@@ -72,12 +82,11 @@ def view(request):
 
     plotter.plot_combined()
     plotter.generate_combined_svg()
-    # return HttpResponseRedirect('static/view.html')
+
     return render(request, "don/ovs/views.html", macro)
 
 
 def analyze(request):
-    # pwd = settings.BASE_DIR
     pwd = settings.ROOT_PATH
     JSON_FILE = pwd + '/don/ovs/don.json'
 
@@ -89,14 +98,9 @@ def analyze(request):
         'test:ovs': True,
         'test:report_file': pwd + '/don/templates/don/don.report.html',
     }
-    print "params ====> ", params
+    print("params ====> ", params)
     analyzer.analyze(JSON_FILE, params)
-    # output = analyzer.analyze(JSON_FILE, params)
-    # html = '<html><body>Output: %s</body></html>' % output
-    # return HttpResponse(html)
-    # return HttpResponseRedirect('/static/don.report.html')
     return render(request, "don/ovs/analyze.html")
-    # return render_to_response('don/ovs/analyze.html')
 
 
 def test(request):
@@ -111,13 +115,10 @@ def ping(request):
         # check whether it's valid:
         if form.is_valid():
             # process the data in form.cleaned_data as required
-            # ...
             # redirect to a new URL:
             src_ip = form.cleaned_data['src_ip']
             dst_ip = form.cleaned_data['dst_ip']
             router = form.cleaned_data['router']
-            # html = '<html><body>SIP: %s DIP: %s router: %s</body></html>' % (src_ip, dst_ip, router)
-            # return HttpResponse(html)
             static_path = settings.STATIC_ROOT
             pwd = settings.ROOT_PATH
             JSON_FILE = pwd + '/don/ovs/don.json'
@@ -148,7 +149,6 @@ def ping(request):
             NETWORK_SVG_FILE = None
             COMBINED_DOT_FILE = static_path + '/don/ping.dot'
             COMBINED_SVG_FILE = static_path + '/don/ping.svg'
-            # HIGHLIGHT_FILE    = pwd + '/don/ovs/static/ping.html'
             HIGHLIGHT_FILE = static_path + '/don/ping.html'
 
             plotter = DotGenerator(JSON_FILE,
@@ -163,7 +163,6 @@ def ping(request):
             plotter.plot_combined()
             plotter.generate_combined_svg()
 
-            # return HttpResponseRedirect('/static/path.html')
             return render(request, 'don/ovs/path.html')
 
     # if a GET (or any other method) we'll create a blank form
@@ -177,7 +176,8 @@ def ping(request):
         ip_list = get_instance_ips(output)
         ip_list.sort()
         router_op = execute_cmd(
-            ['neutron', 'router-list'], sudo=False, shell=False, env=myenv).split('\n')
+            ['neutron', 'router-list'],
+            sudo=False, shell=False, env=myenv).split('\n')
         router_list = get_router_names(router_op)
         router_list.sort()
         # insert first value of select menu
@@ -197,11 +197,11 @@ def collect(request):
     status = 0
 
     BASE_DIR = settings.ROOT_PATH
-    # CUR_DIR = os.getcwd()
     os.chdir(BASE_DIR + '/don/ovs')
     cmd = 'sudo python collector.py'
     for line in run_command(cmd):
-        if line.startswith('STATUS:') and line.find('Writing collected info') != -1:
+        if line.startswith('STATUS:') and line.find(
+            'Writing collected info') != -1:
             status = 1
             macro['collect_status'] = \
                 "Collecton successful. Click visualize to display"
@@ -230,4 +230,5 @@ def get_status(request):
     BASE_DIR = settings.ROOT_PATH + '/don/ovs/'
     status = open(BASE_DIR + 'collector_log.txt', 'r').readline()
     if status != " " and status != '\n':
-        return HttpResponse(json.dumps({'status': status}), content_type="application/json")
+        return HttpResponse(json.dumps(
+            {'status': status}), content_type="application/json")
