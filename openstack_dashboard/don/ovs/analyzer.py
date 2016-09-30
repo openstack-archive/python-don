@@ -90,24 +90,23 @@ def run_ping_command(cmd, comment=''):
                                    universal_newlines=True).replace('\t', '    ')
 
 
-def report_file_open(report_file):
-    f = open(report_file, 'w')
-    f.write('<html>\n')
-    f.write('<head>\n')
-    f.write(
-        '<script type="text/javascript" src="{{ STATIC_URL }}/don/CollapsibleLists.js"></script>\n')
-    f.write(
-        '<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}/don/don.css">\n')
-    f.write('<title>DON: Analysis Results</title>\n')
-    f.write('</head>\n')
-    f.write('<body onload=CollapsibleLists.apply()>\n')
-
-    return f
+def report_file_write(report_file):
+    with open(report_file, 'w') as f:
+        f.write('<html>\n')
+        f.write('<head>\n')
+        f.write(
+            '<script type="text/javascript" src="{{ STATIC_URL }}/don/CollapsibleLists.js"></script>\n')
+        f.write(
+            '<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}/don/don.css">\n')
+        f.write('<title>DON: Analysis Results</title>\n')
+        f.write('</head>\n')
+        f.write('<body onload=CollapsibleLists.apply()>\n')
 
 
-def report_file_close(file_handle):
-    file_handle.write('</body>\n')
-    file_handle.write('</html>\n')
+def report_file_close(report_file):
+    with open(report_file, 'a') as f:
+        f.write('</body>\n')
+        f.write('</html>\n')
 
 
 def print_ping_result(cmds, overall_result, info, comment=None):
@@ -364,12 +363,13 @@ def analyze(json_filename, params):
             test_suite[test]['html'] = lines
 
     debug(params['test:report_file'])
-    f = report_file_open(params['test:report_file'])
+    report_file_write(params['test:report_file'])
     for test in test_suite.keys():
         if test_suite[test]['html']:
             for line in test_suite[test]['html']:
-                f.write(line)
-    report_file_close(f)
+                with open(params['test:report_file'], 'w') as f:
+                    f.write(line)
+    report_file_close(params['test:report_file'])
     os.chdir(CUR_DIR)
 
 
