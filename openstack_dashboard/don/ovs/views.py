@@ -205,7 +205,6 @@ def collect(request):
             status = 1
             macro['collect_status'] = \
                 "Collecton successful. Click visualize to display"
-    # res = collector.main()
     os.chdir(BASE_DIR)
     if status:
         messages.success(request, macro['collect_status'])
