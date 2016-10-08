@@ -18,20 +18,20 @@ import re
 
 import openstack_dashboard.don.ovs.common as common
 
-don_config = ConfigParser.ConfigParser()
-try:
-    don_config.read('/etc/don/don.conf')
-except Exception as e:
-    print(e.value)
-deployment_type = don_config.get('DEFAULT', 'deployment_type')
-
 
 def get_env(filename):
+    """Returns environment dictionary created from the environment file.
+
+    :param filename: the name of the environment file.
+    """
+    # Try read enviornment file
     try:
-        lines = open(os.getcwd() + os.sep + filename, 'r').read().splitlines()
+        with open(os.getcwd() + os.sep + filename, 'r') as f:
+            lines = f.read().splitlines()
     except IOError as e:
-        print("%s :%s" % (e.args[1], filename))
-        raise
+        raise(e)
+
+    # Create env dictionary based on lines that starts with 'export ...'
     env = {}
     for line in lines:
         if line.startswith('export'):
@@ -42,8 +42,6 @@ def get_env(filename):
                 env.update({key: val})
     return env
 
-myenv = os.environ.copy()
-myenv.update(get_env('admin-openrc.sh'))
 
 # Contains all info gathered by parsing the output of commands
 info = {
@@ -497,7 +495,6 @@ def neutron_router_list_parser(parse_this):
             'parser': ip_namespace_qrouter_parser,
         }
         add_new_command(commands, cmd_key, cmd)
-    pass
 
 
 def ip_namespace_qrouter_parser(parse_this):
@@ -640,7 +637,6 @@ def neutron_net_list_parser(parse_this):
             'parser': ip_namespace_qdhcp_parser,
         }
         add_new_command(commands, cmd_key, cmd)
-    pass
 
 
 '''
@@ -915,7 +911,22 @@ def get_hypervisor(parse_this):
     return hypervisor
 
 
+def load_config():
+    """Loads configuration."""
+    don_config = ConfigParser.ConfigParser()
+    try:
+        don_config.read('/etc/don/don.conf')
+    except Exception as e:
+        raise(e.value)
+    return don_config.get('DEFAULT', 'deployment_type')
+
+
 def main():
+    deployment_type = load_config()
+
+    myenv = os.environ.copy()
+    myenv.update(get_env('admin-openrc.sh'))
+
     check_args()
 
     iteration = 0
@@ -965,6 +976,7 @@ def main():
     common.status_update(
         'Writing collected info into ' + common.settings['info_file'])
     common.dump_json(info, common.settings['info_file'])
+
 
 if __name__ == "__main__":
     main()
