@@ -56,27 +56,49 @@ info = {
 }
 
 
-def add_new_command(cmd_dict, cmd_key, cmd):
-    if cmd_dict.has_key(cmd_key):
+def add_new_command(cmds, cmd_key, cmd):
+    """Add given command to the commands dictionary.
+
+    :param cmds: the commands dictionary.
+    :param cmd_key: the key of the dictionary where to add the command.
+    :param cmd: the dictionary of the command.
+    """
+    if cmds.has_key(cmd_key):
         common.error(cmd_key + ' already exists in command dictionary')
-        return
-    cmd_dict[cmd_key] = cmd
+    else:
+        cmds[cmd_key] = cmd
 
 
-def record_linuxbridge(bridge, interface_list):
-    brctl_dict = info['brctl']
-    if brctl_dict.has_key(bridge):
+# TODO(abregman): create collector class and make bridges its attribute
+bridges = {}
+
+
+def record_linuxbridge(bridges, bridge, interface_list):
+    """Add given bridge and its interfaces to the bridges dictionary.
+
+    The bridge is coming from brctl command.
+
+    :param bridge: the name of the bridge.
+    :param interface_list: the interfaces of the bridge.
+    """
+    if bridges.has_key(bridge):
         common.error('Bridge ' + bridge + ' repeated! Overwriting!')
-    brctl_dict[bridge] = {'interfaces': interface_list}
+    bridges[bridge] = {'interfaces': interface_list}
 
 
-def get_bridge_entry(br):
-    bridge_dict = info['bridges']
-    if not bridge_dict.has_key(br):
-        common.error('Bridge ' + br + ' does not exist! Supported bridges: ' +
-                     str(bridge_dict.keys()))
+def get_bridge_entry(bridge):
+    """Returns given bridge dictionary.
+
+    :param bridge: the name of the bridge.
+    """
+    bridges = info['bridges']
+    if not bridges.has_key(bridge):
+        common.error('Bridge ' + bridge +
+                     ' does not exist! Supported bridges: ' +
+                     str(bridges.keys()))
         return None
-    return bridge_dict.get(br)
+    else:
+        return bridges.get(bridge)
 
 
 # Parser functions (for each command). Each function has the sample input
@@ -141,7 +163,7 @@ def brctl_show_parser(parse_this):
             # We already have a bridge, that means we are now lookign at the
             # next bridge
             if bridge:
-                record_linuxbridge(bridge, interfaces)
+                record_linuxbridge(bridges, bridge, interfaces)
                 interfaces = []
             bridge = m.group(1)
             interfaces.append(m.group(2))
@@ -152,7 +174,7 @@ def brctl_show_parser(parse_this):
 
     # handle the last bridge
     if bridge:
-        record_linuxbridge(bridge, interfaces)
+        record_linuxbridge(bridges, bridge, interfaces)
 
 '''
 ubuntu@ubuntu-VirtualBox:~/don$ sudo ovs-vsctl show
