@@ -1,0 +1,9 @@
+Code-Review+2: Amit Saha <amsaha@gmail.com>
+Workflow+1: Amit Saha <amsaha@gmail.com>
+Code-Review+1: yangjidong <yangjd@inspur.com>
+Verified+2: Jenkins
+Submitted-by: Jenkins
+Submitted-at: Fri, 21 Oct 2016 06:01:21 +0000
+Reviewed-on: https://review.openstack.org/384085
+Project: openstack/python-don
+Branch: refs/heads/master
