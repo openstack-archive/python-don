@@ -69,3 +69,27 @@ class TestOvsCollector(base.TestCase):
         self.assertIsNone(collector.get_bridge_entry(false_bridge))
         self.assertEqual(dict(ports={}),
                          collector.get_bridge_entry(supported_bridge))
+
+    def test_libvirt_instance_parser(self):
+
+        data = """
+        <uuid>31b1cfcc-ca85-48a9-a84a-8b222d377080</uuid>
+            <nova:name>VM1</nova:name>
+            <source bridge='qbrb0f5cfc8-4d'/>
+        <uuid>f9743f1c-caeb-4892-af83-9dc0ac757545</uuid>
+            <nova:name>VM2</nova:name>
+            <source bridge='qbr6ce314cb-a5'/>
+        """
+
+        parsed_data = collector.libvirt_instance_parser(data.split('\n'))
+        print parsed_data
+
+        self.assertTrue(parsed_data.has_key('VM1'))
+        self.assertTrue(parsed_data['VM1'].has_key('uuid'))
+        self.assertTrue(parsed_data['VM1'].has_key('src_bridge'))
+        self.assertTrue(parsed_data['VM1'].has_key('tap_dev'))
+
+        self.assertTrue(parsed_data.has_key('VM2'))
+        self.assertTrue(parsed_data['VM2'].has_key('uuid'))
+        self.assertTrue(parsed_data['VM2'].has_key('src_bridge'))
+        self.assertTrue(parsed_data['VM2'].has_key('tap_dev'))

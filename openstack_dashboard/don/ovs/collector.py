@@ -101,47 +101,58 @@ def get_bridge_entry(bridge):
         return bridges.get(bridge)
 
 
-# Parser functions (for each command). Each function has the sample input
-# as a comment above it.
-'''
-  <uuid>31b1cfcc-ca85-48a9-a84a-8b222d377080</uuid>
-      <nova:name>VM1</nova:name>
-      <source bridge='qbrb0f5cfc8-4d'/>
-  <uuid>f9743f1c-caeb-4892-af83-9dc0ac757545</uuid>
-      <nova:name>VM2</nova:name>
-      <source bridge='qbr6ce314cb-a5'/>
-'''
+def libvirt_instance_parser(data):
+    """Parse instances from libvirt instance-*.xml files.
 
+    Each block of instance data converted to a dictionary.
 
-def cat_instance_parser(parse_this):
+    Sample of data:
+
+    <uuid>31b1cfcc-ca85-48a9-a84a-8b222d377080</uuid>
+        <nova:name>VM1</nova:name>
+        <source bridge='qbrb0f5cfc8-4d'/>
+    <uuid>f9743f1c-caeb-4892-af83-9dc0ac757545</uuid>
+        <nova:name>VM2</nova:name>
+        <source bridge='qbr6ce314cb-a5'/>
+
+    Result:
+
+    'VM1': {'uuid': '31b1cfcc-ca85-48a9-a84a-8b222d377080',
+            'src_bridge': ['qbrb0f5cfc8-4d'],
+            'tap_dev': ['qbrb0f5cfc8-4d']
+           }
+    """
+
     vm_dict = info['vms']
 
     uuid = None
     name = None
     src_bridge = None
-    for line in parse_this:
-        m = re.search('<uuid>(\S+)</uuid>', line)
+
+    for line in data:
+        m = re.search(r'<uuid>(.*)</uuid>', line)
         if m:
             uuid = m.group(1)
             continue
-        m = re.search('<nova:name>(\S+)</nova:name>', line)
+        m = re.search(r'<nova:name>(.*)</nova:name>', line)
         if m:
             name = m.group(1)
             continue
-        m = re.search('<source bridge=\'(\S+)\'/>', line)
+        m = re.search(r'<source bridge=(.*)/>', line)
         if m:
             src_bridge = m.group(1)
 
             if not vm_dict.has_key(name):
                 vm_dict[name] = {}
 
-            vm_entry = vm_dict[name]
-            vm_entry['uuid'] = uuid
-            if not vm_entry.has_key('src_bridge'):
-                vm_entry['src_bridge'] = []
-                vm_entry['tap_dev'] = []
-            vm_entry['src_bridge'].append(src_bridge)
-            vm_entry['tap_dev'].append(src_bridge.replace('qbr', 'tap'))
+            vm_dict[name]['uuid'] = uuid
+            if not vm_dict[name].has_key('src_bridge'):
+                vm_dict[name]['src_bridge'] = []
+                vm_dict[name]['tap_dev'] = []
+            vm_dict[name]['src_bridge'].append(src_bridge)
+            vm_dict[name]['tap_dev'].append(src_bridge.replace('qbr', 'tap'))
+
+    return vm_dict
 
 
 '''
@@ -713,7 +724,7 @@ commands = {
                 'order': 1,
                 'parser': nova_list_parser,
     },
-        'cat_instance':
+        'libvirt_instance':
             {
                 'cmd': 'cat /etc/libvirt/qemu/instance-*.xml | egrep -e "<uuid>" -e "nova:name" -e "source bridge"',
                 'help': 'Collect some info from the launched VMs',
@@ -721,7 +732,7 @@ commands = {
                 'shell': True,
                 'output': None,
                 'order': 2,
-                'parser': cat_instance_parser,
+                'parser': libvirt_instance_parser,
     },
         'neutron_port_list':
             {
@@ -978,7 +989,7 @@ def main():
                     if cmd.startswith('netns_'):
                         commands[cmd]['output'] = exec_on_remote(
                             commands[cmd]['cmd'])
-                    if cmd == 'cat_instance':
+                    if cmd == 'libvirt_instance':
                         commands[cmd][
                             'output'] = get_vm_info_from_compute(
                                 commands[cmd]['cmd'], my_env)
