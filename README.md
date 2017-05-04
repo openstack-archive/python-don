@@ -65,11 +65,25 @@ visualizer module, and the test module.
 
 0. You must have a [devstack setup running on a single VM](http://docs.openstack.org/developer/devstack/guides/single-vm.html).
 1. [Download and source the project specific rc file](http://docs.openstack.org/user-guide/common/cli_set_environment_variables_using_openstack_rc.html).
+.. code-block:: shell
+    $ git clone https://github.com/openstack/python-don.git
 2. Copy openstack_dashboard/, static/ directories from DON source to Horizon directory.(/opt/stack/horizon/)
+.. code-block:: shell
+    $ cp -R python-don/openstack_dashboard/don /opt/stack/horizon/openstack_dashboard/
 3. Copy etc/don/ from DON source to /etc 
+.. code-block:: shell
+    # mkdir /etc/don
+    # chown stack:root /etc/don
+    # cp etc/don/don.conf /etc/don/
+    # chown -R stack:stack /etc/don/don.conf
 4. Edit /etc/don/don.conf and change `deployment_type=devstack` under [DEFAULT] section.
+.. code-block:: shell
+    # sed -i "s/deployment_type=multinode/deployment_type=devstack/" /etc/don/don.conf 
 5. To allow DON to do Ping tests between all pairs of VMs, configure VM credentials manually into /opt/stack/horizon/openstack_dashboard/don/ovs/credentials.yaml
-6. Restart Horizon by executing `sudo service apache2 restart`
+6. Compress django javascript libraries
+.. code-block:: shell
+    $ DJANGO_SETTINGS_MODULE=openstack_dashboard.settings django-admin compress --force
+7. Restart Horizon by executing `sudo service apache2 restart`
 
 ### Steps for Multinode Openstack:
 
