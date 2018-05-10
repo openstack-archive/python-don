@@ -130,7 +130,7 @@ def ping(request):
                 'router': router,
                 'path_file': static_path + '/don/ping.html',
                 'username': 'cirros',
-                'passwd': 'cubswin:)',
+                'passwd': 'gocubsgo',
                 'count': 2,
                 'timeout': 2,
                 'debug': True,

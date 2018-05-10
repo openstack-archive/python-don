@@ -16,7 +16,7 @@
 # HOWTO:
 #
 # For OpenStack, this program must be run from inside the correct namespace
-# sudo ip netns exec qrouter-ac41aab2-f9c3-4a06-8eef-f909ee1e6e50 python ping.py 10.0.3.3 10.0.2.4 cirros "cubswin:)"
+# sudo ip netns exec qrouter-ac41aab2-f9c3-4a06-8eef-f909ee1e6e50 python ping.py 10.0.3.3 10.0.2.4 cirros "gocubsgo"
 
 import argparse
 import json
